@@ -44,7 +44,9 @@ database.xlsx  →  scripts/export_json.py  →  database.json  →  viewer.html
 - **pdfs/** — intake folder for new PDFs from the user; filenames have a numeric prefix (`1. SING-2B-001.pdf`); copy to `floor-plans/` with clean name before processing
 - **floor-plans/** — one PDF per unit, named `{ID}.pdf` (e.g. `floor-plans/SING-2B-001.pdf`)
 - **thumbnails/** — processed PNG thumbnails, named `{ID}.png`, 1000×1000px square
-- **THUMBNAIL REFERENCE STYLE GUIDE/** — reference images and `STYLE_GUIDE.md` describing the target thumbnail aesthetic
+- **THUMBNAIL REFERENCE STYLE GUIDE/** — reference images and `STYLE_GUIDE.md` describing the target thumbnail aesthetic (local only, not in git)
+
+The project is published via GitHub Pages. After adding units, commit and push to update the live viewer.
 
 ---
 
@@ -152,13 +154,20 @@ The current intake workflow uses clean single-apartment PDFs:
 
 **What the user provides:**
 - A PDF of a single floor plan dropped into the `pdfs/` folder, named with a numeric prefix (e.g. `3. SING-1B-001.pdf`)
-- A text box embedded in the corner of the PDF containing the apartment ID and reference project (e.g. `SING-2B-005 / Amara Alexandria APT 403 L4`); "TYPICAL" is used when there is no specific reference project
+- A corner text box on the PDF containing the apartment ID and reference project on separate lines:
+  ```
+  SING-2B-005
+  REFERENCE:
+  Amara Alexandria
+  ```
+  "TYPICAL" is used as the reference when there is no specific source project.
+- A title block on the drawing showing apartment number, bedroom count, and area (e.g. `403 / 3B / 100.85 m²`)
 - Area (m²) labelled on the drawing itself (room schedule label or title block)
 
 **What Claude interprets from the drawing:**
-1. **Frontage type** — apply the party-wall test (see below). Default to Single aspect when in doubt.
+1. **Frontage type** — apply the party-wall test (see above). Default to Single aspect when in doubt.
 2. **Dimensions** — read width and depth from dimension annotations on the drawing.
-3. **Bedrooms** — count rooms labelled BED / BEDROOM / Bed N (per rules below). Do not count study.
+3. **Bedrooms** — count rooms labelled BED / BEDROOM / Bed N (per rules above). Do not count study.
 4. **Bathrooms** — count all wet rooms (BATH, ENS, PWD, etc.).
 5. **Study** — record "Yes" if any room is labelled STUDY or similar; otherwise "No".
 6. **Area** — read from the drawing label; record as integer or one decimal.
@@ -170,22 +179,21 @@ The current intake workflow uses clean single-apartment PDFs:
 4. Run `python3 scripts/process_pdf.py {ID}` to generate the thumbnail.
 5. Insert a new row in `database.xlsx` in the correct sorted position (frontage group → bedroom count → sequence number).
 6. Run `python3 scripts/export_json.py` to regenerate `database.json`.
-7. Re-derive downstream IDs in any affected group if a reclassification occurred.
+7. Commit and push to publish: `git add database.json database.xlsx thumbnails/ floor-plans/ && git commit -m "add {ID}" && git push`
+8. Re-derive downstream IDs in any affected group if a reclassification occurred.
 
 If anything is ambiguous, ask before recording. Common ambiguities:
 - Party wall positions when adjacent units share similar layouts
 - Whether a dimension spans two units rather than just the subject unit
 - Whether an external wall counts as a frontage when no window/door is shown
 - Unlabelled rooms that could be a study or a bedroom
+- ID mismatch between the filename and the corner text box — confirm with the user before recording
 
 ## Querying the database
 
-The primary interface is `viewer.html` — open it in a browser. It loads `database.json` and provides filters for frontage type, bedrooms, bathrooms, width range, depth range, area range, and a "Has study" toggle, with thumbnails displayed in a grid.
+The primary interface is the live viewer at https://chrislstelz.github.io/sj-apartment-db/viewer.html. It loads `database.json` and provides filters for frontage type, bedrooms, bathrooms, width range, depth range, area range, and a "Has study" toggle, with thumbnails displayed in a grid.
 
-To regenerate `database.json` after editing the spreadsheet:
-```bash
-python3 scripts/export_json.py
-```
+To view locally, open `viewer.html` in a browser (serve with `python -m http.server` if your browser blocks local fetch).
 
 The viewer is read-only. Edits to the database are made directly in `database.xlsx` (in Excel) or via Claude in this project.
 
@@ -199,7 +207,7 @@ The database started in May 2026 with three marketing-sheet pilot units (Amara, 
 
 Area (m²) and Study fields were added when the PDF workflow was adopted. Conventions for the "Other" category, the inclusion of powder rooms in bathroom counts, the `XTHR` code, and the party-wall diagnostic were all added based on cases that exposed gaps in earlier rules. New conventions should be documented in this file when they're decided.
 
-As of May 2026 the database contains 3 units: SING-1B-001, SING-2B-001, XTHR-2B-001. Earlier entries from archival multi-unit PDFs were removed; the database now reflects only units with clean single-apartment source PDFs.
+As of May 2026 the database contains 6 units: SING-1B-001, SING-1B-002, SING-2B-001, COR-3B-001, XTHR-2B-001, XTHR-2B-002. The project is published on GitHub Pages and updated via git push after each intake session.
 
 ## Thumbnail processing notes
 
