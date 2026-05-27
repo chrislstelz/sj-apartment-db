@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apartment Database</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f5f3ee;
+    --rule: #1a1a1a;
+    --muted: #6b6660;
+    --accent: #c2451d;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Hoefler Text", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 15px;
+    line-height: 1.4;
+    height: 100%;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .card {
+    border: 1px solid var(--rule);
+    padding: 3rem 3.5rem 2.5rem;
+    max-width: 360px;
+    width: 100%;
+  }
+  h1 {
+    font-family: "Helvetica Neue", "Helvetica", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 0.25rem;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0 0 2.5rem;
+  }
+  label {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+  }
+  input[type="password"] {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 0.5rem;
+  }
+  input[type="password"]:focus {
+    border-color: var(--accent);
+  }
+  .error {
+    font-size: 0.8rem;
+    color: var(--accent);
+    min-height: 1.2em;
+    margin-bottom: 1rem;
+    font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+  }
+  button {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  button:hover { background: #333; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Studio Johnston</h1>
+  <p class="sub">Apartment Database</p>
+  <form id="form" onsubmit="return attempt()">
+    <label for="pw">Password</label>
+    <input type="password" id="pw" autofocus autocomplete="current-password">
+    <div class="error" id="err"></div>
+    <button type="submit">Enter</button>
+  </form>
+</div>
+<script>
+  function attempt() {
+    if (document.getElementById('pw').value === 'sj2021') {
+      sessionStorage.setItem('sj_auth', '1');
+      location.href = 'viewer.html';
+    } else {
+      document.getElementById('err').textContent = 'Incorrect password.';
+      document.getElementById('pw').value = '';
+      document.getElementById('pw').focus();
+    }
+    return false;
+  }
+</script>
+</body>
+</html>

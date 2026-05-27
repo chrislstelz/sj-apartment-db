@@ -22,9 +22,9 @@ git add database.json database.xlsx thumbnails/ floor-plans/
 git commit -m "add {ID}"
 git push
 ```
-Live URL: https://chrislstelz.github.io/sj-apartment-db/viewer.html
+Live URL: https://chrislstelz.github.io/sj-apartment-db/ (password: sj2021)
 
-View the database locally: open `viewer.html` directly in a browser (no server needed — it uses `fetch` on a local file, so serve with `python -m http.server` if your browser blocks local fetch).
+View the database locally: open `index.html` in a browser (password: sj2021). Serve with `python -m http.server` if your browser blocks local fetch.
 
 Dependencies: `pip install openpyxl pymupdf pillow`
 
@@ -34,13 +34,16 @@ Static stack — no build process, no backend:
 
 ```
 database.xlsx  →  scripts/export_json.py  →  database.json  →  viewer.html
+                                                               ↑
+                                                           index.html (password gate)
 ```
 
 - **database.xlsx** — source of truth; one sheet "Apartments", columns A–K
 - **export_json.py** — reads xlsx with openpyxl, writes JSON array to `database.json`; checks `thumbnails/` for matching PNGs
 - **process_pdf.py** — converts `floor-plans/{ID}.pdf` → `thumbnails/{ID}.png`; renders at 8×, applies 3-zone greyscale tone mapping, erases artifacts and text, crops to content, pads to 1000×1000px square
 - **database.json** — generated; do not edit by hand
-- **viewer.html** — standalone HTML+JS; fetches `database.json`, renders a filterable card grid with modal detail view
+- **index.html** — landing page; password gate (password: sj2021); stores auth flag in `sessionStorage` and redirects to `viewer.html`
+- **viewer.html** — standalone HTML+JS; fetches `database.json`, renders a filterable card grid with modal detail view; redirects to `index.html` if not authenticated
 - **pdfs/** — intake folder for new PDFs from the user; filenames have a numeric prefix (`1. SING-2B-001.pdf`); copy to `floor-plans/` with clean name before processing
 - **floor-plans/** — one PDF per unit, named `{ID}.pdf` (e.g. `floor-plans/SING-2B-001.pdf`)
 - **thumbnails/** — processed PNG thumbnails, named `{ID}.png`, 1000×1000px square
@@ -191,9 +194,9 @@ If anything is ambiguous, ask before recording. Common ambiguities:
 
 ## Querying the database
 
-The primary interface is the live viewer at https://chrislstelz.github.io/sj-apartment-db/viewer.html. It loads `database.json` and provides filters for frontage type, bedrooms, bathrooms, width range, depth range, area range, and a "Has study" toggle, with thumbnails displayed in a grid.
+The primary interface is the live viewer at https://chrislstelz.github.io/sj-apartment-db/ (password: sj2021). It loads `database.json` and provides filters for frontage type, bedrooms, bathrooms, width range, depth range, area range, and a "Has study" toggle, with thumbnails displayed in a grid.
 
-To view locally, open `viewer.html` in a browser (serve with `python -m http.server` if your browser blocks local fetch).
+To view locally, open `index.html` in a browser (serve with `python -m http.server` if your browser blocks local fetch).
 
 The viewer is read-only. Edits to the database are made directly in `database.xlsx` (in Excel) or via Claude in this project.
 
