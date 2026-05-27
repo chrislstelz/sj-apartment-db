@@ -16,7 +16,15 @@ Export spreadsheet to JSON (required after any edit to `database.xlsx`):
 python3 scripts/export_json.py
 ```
 
-View the database: open `viewer.html` directly in a browser (no server needed — it uses `fetch` on a local file, so serve with `python -m http.server` if your browser blocks local fetch).
+Publish updates to the live viewer (run after adding units):
+```bash
+git add database.json database.xlsx thumbnails/ floor-plans/
+git commit -m "add {ID}"
+git push
+```
+Live URL: https://chrislstelz.github.io/sj-apartment-db/viewer.html
+
+View the database locally: open `viewer.html` directly in a browser (no server needed — it uses `fetch` on a local file, so serve with `python -m http.server` if your browser blocks local fetch).
 
 Dependencies: `pip install openpyxl pymupdf pillow`
 
