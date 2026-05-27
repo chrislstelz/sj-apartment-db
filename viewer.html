@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apartment Database</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f5f3ee;
+    --rule: #1a1a1a;
+    --muted: #6b6660;
+    --tint: #ebe7dd;
+    --accent: #c2451d;
+    --shadow: 0 1px 0 rgba(0,0,0,0.04);
+    --grid-gap: 1.5rem;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Hoefler Text", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding: 2rem 2.5rem 1.25rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  h1 {
+    font-family: "Helvetica Neue", "Helvetica", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .meta {
+    font-family: "Helvetica Neue", "Helvetica", sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .meta span { color: var(--ink); font-weight: 600; }
+
+  /* Filter rail */
+  .filters {
+    padding: 1.25rem 2.5rem 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem 2rem;
+  }
+  .filter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .filter label {
+    font-family: "Helvetica Neue", "Helvetica", sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .pill {
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.12s, color 0.12s;
+  }
+  .pill:hover { background: var(--tint); }
+  .pill.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 0.75rem;
+  }
+  .range input[type="number"] {
+    width: 4rem;
+    border: none;
+    border-bottom: 1px solid var(--ink);
+    background: transparent;
+    font: inherit;
+    padding: 0.2rem 0;
+    color: var(--ink);
+  }
+  .range input[type="number"]:focus { outline: none; border-bottom-width: 2px; }
+  .range span { color: var(--muted); }
+  .reset {
+    grid-column: 1 / -1;
+    justify-self: end;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 0.3rem 0;
+  }
+  .reset:hover { text-decoration: underline; }
+
+  /* Results */
+  main {
+    padding: 2rem 2.5rem 4rem;
+  }
+  .results-meta {
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .results-meta strong { color: var(--ink); font-weight: 700; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--grid-gap);
+  }
+  .card {
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    transition: background 0.15s;
+  }
+  .card:hover { background: var(--tint); }
+  .thumb {
+    aspect-ratio: 1 / 1;
+    background: white;
+    border-bottom: 1px solid var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .thumb img {
+    max-width: 92%;
+    max-height: 92%;
+    object-fit: contain;
+  }
+  .thumb.empty {
+    color: var(--muted);
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .card-body {
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .card-id {
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+  }
+  .card-frontage {
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .card-stats {
+    display: flex;
+    gap: 1.25rem;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 0.8rem;
+  }
+  .card-stats div { display: flex; flex-direction: column; gap: 0.15rem; }
+  .card-stats .key {
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .card-stats .val {
+    font-weight: 600;
+    font-family: "Iowan Old Style", "Hoefler Text", Georgia, serif;
+    font-size: 1rem;
+  }
+  .card-ref {
+    font-family: "Iowan Old Style", "Hoefler Text", Georgia, serif;
+    font-size: 0.78rem;
+    font-style: italic;
+    color: var(--muted);
+    border-top: 1px solid var(--tint);
+    padding-top: 0.6rem;
+    margin-top: 0.2rem;
+    line-height: 1.35;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  /* Modal */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,26,0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    z-index: 100;
+  }
+  .modal.open { display: flex; }
+  .modal-content {
+    background: var(--paper);
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid var(--ink);
+    padding: 2rem;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--muted);
+  }
+  .modal-img {
+    width: 100%;
+    background: white;
+    border: 1px solid var(--rule);
+    margin-bottom: 1.5rem;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-img img { max-width: 95%; max-height: 95%; object-fit: contain; }
+  .modal h2 {
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.06em;
+    margin: 0 0 1rem;
+  }
+  .modal-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem 1.5rem;
+    font-family: "Helvetica Neue", sans-serif;
+    margin-bottom: 1rem;
+  }
+  .modal-stats .key {
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.1rem;
+  }
+  .modal-stats .val { font-size: 0.95rem; font-weight: 600; }
+
+  /* Print */
+  @media print {
+    .filters, header { display: none; }
+    .grid { grid-template-columns: repeat(3, 1fr); }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Apartment Database</h1>
+  <div class="meta">Studio Johnston &middot; <span id="unitCount">0</span> units indexed</div>
+</header>
+
+<section class="filters">
+  <div class="filter">
+    <label>Frontage</label>
+    <div class="pills" id="frontagePills"></div>
+  </div>
+  <div class="filter">
+    <label>Bedrooms</label>
+    <div class="pills" id="bedsPills"></div>
+  </div>
+  <div class="filter">
+    <label>Bathrooms</label>
+    <div class="pills" id="bathsPills"></div>
+  </div>
+  <div class="filter">
+    <label>Width (m)</label>
+    <div class="range">
+      <input type="number" id="widthMin" step="0.1" placeholder="min">
+      <span>&ndash;</span>
+      <input type="number" id="widthMax" step="0.1" placeholder="max">
+    </div>
+  </div>
+  <div class="filter">
+    <label>Depth (m)</label>
+    <div class="range">
+      <input type="number" id="depthMin" step="0.1" placeholder="min">
+      <span>&ndash;</span>
+      <input type="number" id="depthMax" step="0.1" placeholder="max">
+    </div>
+  </div>
+  <div class="filter">
+    <label>Area (m²)</label>
+    <div class="range">
+      <input type="number" id="areaMin" step="1" placeholder="min">
+      <span>&ndash;</span>
+      <input type="number" id="areaMax" step="1" placeholder="max">
+    </div>
+  </div>
+  <div class="filter">
+    <label>Study</label>
+    <div class="pills" id="studyPills"></div>
+  </div>
+  <button class="reset" id="resetBtn">Reset filters</button>
+</section>
+
+<main>
+  <div class="results-meta"><strong id="resultCount">0</strong> matches</div>
+  <div id="grid" class="grid"></div>
+  <div id="emptyState" class="empty-state" style="display:none">No units match these filters.</div>
+</main>
+
+<div class="modal" id="modal" onclick="if(event.target===this) closeModal()">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-img"><img id="modalImg" alt=""></div>
+    <h2 id="modalId"></h2>
+    <div class="modal-stats" id="modalStats"></div>
+    <p style="font-style:italic; color:var(--muted); margin:0;" id="modalRef"></p>
+  </div>
+</div>
+
+<script>
+const FRONTAGES = ["Single aspect", "Corner", "Cross-through", "Other"];
+const state = {
+  data: [],
+  filters: {
+    frontage: new Set(),
+    beds: new Set(),
+    baths: new Set(),
+    widthMin: null, widthMax: null,
+    depthMin: null, depthMax: null,
+    areaMin: null, areaMax: null,
+    study: false,
+  },
+};
+
+async function init() {
+  try {
+    const res = await fetch("database.json");
+    state.data = await res.json();
+  } catch (e) {
+    document.getElementById("grid").innerHTML =
+      `<p style="font-style:italic; color:var(--muted);">Could not load database.json. Run <code>python scripts/export_json.py</code> first.</p>`;
+    return;
+  }
+
+  document.getElementById("unitCount").textContent = state.data.length;
+  buildPills();
+  attachRangeHandlers();
+  document.getElementById("resetBtn").addEventListener("click", resetFilters);
+  render();
+}
+
+function buildPills() {
+  const frontageDiv = document.getElementById("frontagePills");
+  FRONTAGES.forEach(f => {
+    const btn = document.createElement("button");
+    btn.className = "pill";
+    btn.textContent = f;
+    btn.dataset.value = f;
+    btn.addEventListener("click", () => toggleSet(state.filters.frontage, f, btn));
+    frontageDiv.appendChild(btn);
+  });
+
+  const allBeds = [...new Set(state.data.map(u => u.bedrooms))].sort((a,b) => a-b);
+  const bedsDiv = document.getElementById("bedsPills");
+  allBeds.forEach(n => {
+    const btn = document.createElement("button");
+    btn.className = "pill";
+    btn.textContent = `${n}B`;
+    btn.dataset.value = n;
+    btn.addEventListener("click", () => toggleSet(state.filters.beds, n, btn));
+    bedsDiv.appendChild(btn);
+  });
+
+  const allBaths = [...new Set(state.data.map(u => u.bathrooms))].sort((a,b) => a-b);
+  const bathsDiv = document.getElementById("bathsPills");
+  allBaths.forEach(n => {
+    const btn = document.createElement("button");
+    btn.className = "pill";
+    btn.textContent = `${n}`;
+    btn.dataset.value = n;
+    btn.addEventListener("click", () => toggleSet(state.filters.baths, n, btn));
+    bathsDiv.appendChild(btn);
+  });
+
+  const studyDiv = document.getElementById("studyPills");
+  const studyBtn = document.createElement("button");
+  studyBtn.className = "pill";
+  studyBtn.id = "studyPill";
+  studyBtn.textContent = "Has study";
+  studyBtn.addEventListener("click", () => {
+    state.filters.study = !state.filters.study;
+    studyBtn.classList.toggle("active", state.filters.study);
+    render();
+  });
+  studyDiv.appendChild(studyBtn);
+}
+
+function toggleSet(set, value, btn) {
+  if (set.has(value)) { set.delete(value); btn.classList.remove("active"); }
+  else { set.add(value); btn.classList.add("active"); }
+  render();
+}
+
+function attachRangeHandlers() {
+  ["widthMin", "widthMax", "depthMin", "depthMax", "areaMin", "areaMax"].forEach(id => {
+    document.getElementById(id).addEventListener("input", e => {
+      const v = e.target.value === "" ? null : parseFloat(e.target.value);
+      state.filters[id] = v;
+      render();
+    });
+  });
+}
+
+function resetFilters() {
+  state.filters.frontage.clear();
+  state.filters.beds.clear();
+  state.filters.baths.clear();
+  state.filters.widthMin = state.filters.widthMax = null;
+  state.filters.depthMin = state.filters.depthMax = null;
+  state.filters.areaMin = state.filters.areaMax = null;
+  state.filters.study = false;
+  document.querySelectorAll(".pill.active").forEach(p => p.classList.remove("active"));
+  ["widthMin", "widthMax", "depthMin", "depthMax", "areaMin", "areaMax"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  render();
+}
+
+function inRange(value, min, max) {
+  if (min !== null && value < min) return false;
+  if (max !== null && value > max) return false;
+  return true;
+}
+
+function applyFilters() {
+  const f = state.filters;
+  return state.data.filter(u => {
+    if (f.frontage.size > 0 && !f.frontage.has(u.frontage)) return false;
+    if (f.beds.size > 0 && !f.beds.has(u.bedrooms)) return false;
+    if (f.baths.size > 0 && !f.baths.has(u.bathrooms)) return false;
+    if (!inRange(u.width, f.widthMin, f.widthMax)) return false;
+    if (!inRange(u.depth, f.depthMin, f.depthMax)) return false;
+    if (f.areaMin !== null || f.areaMax !== null) {
+      if (!inRange(u.area, f.areaMin, f.areaMax)) return false;
+    }
+    if (f.study && !u.study) return false;
+    return true;
+  });
+}
+
+function render() {
+  const filtered = applyFilters();
+  document.getElementById("resultCount").textContent = filtered.length;
+  const grid = document.getElementById("grid");
+  const empty = document.getElementById("emptyState");
+  grid.innerHTML = "";
+
+  if (filtered.length === 0) {
+    empty.style.display = "block";
+    return;
+  }
+  empty.style.display = "none";
+
+  filtered.forEach(u => {
+    const card = document.createElement("article");
+    card.className = "card";
+    card.addEventListener("click", () => openModal(u));
+
+    const dims = u.width2
+      ? `${u.width} / ${u.width2} &times; ${u.depth} m`
+      : `${u.width} &times; ${u.depth} m`;
+
+    card.innerHTML = `
+      <div class="thumb${u.thumbnail ? '' : ' empty'}">
+        ${u.thumbnail
+          ? `<img src="${u.thumbnail}" alt="${u.id}" loading="lazy">`
+          : 'No thumbnail'}
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="card-frontage">${u.frontage}${u.study ? ' &middot; Study' : ''}</div>
+          <div class="card-id">${u.id}</div>
+        </div>
+        <div class="card-stats">
+          <div><span class="key">Beds</span><span class="val">${u.bedrooms}</span></div>
+          <div><span class="key">Bath</span><span class="val">${u.bathrooms}</span></div>
+          <div><span class="key">Size</span><span class="val">${dims}</span></div>
+          ${u.area != null ? `<div><span class="key">Area</span><span class="val">${u.area} m²</span></div>` : ''}
+        </div>
+        <div class="card-ref">${u.reference}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function openModal(u) {
+  document.getElementById("modalId").textContent = u.id;
+  document.getElementById("modalImg").src = u.thumbnail || "";
+  document.getElementById("modalImg").style.display = u.thumbnail ? "" : "none";
+  document.getElementById("modalRef").textContent = u.reference;
+  const stats = document.getElementById("modalStats");
+  const dims = u.width2 ? `${u.width} / ${u.width2} m` : `${u.width} m`;
+  stats.innerHTML = `
+    <div><div class="key">Frontage</div><div class="val">${u.frontage}</div></div>
+    <div><div class="key">Bedrooms</div><div class="val">${u.bedrooms}</div></div>
+    <div><div class="key">Bathrooms</div><div class="val">${u.bathrooms}</div></div>
+    <div><div class="key">Width</div><div class="val">${dims}</div></div>
+    <div><div class="key">Depth</div><div class="val">${u.depth} m</div></div>
+    ${u.area != null ? `<div><div class="key">Area</div><div class="val">${u.area} m²</div></div>` : ''}
+    <div><div class="key">Study</div><div class="val">${u.study ? 'Yes' : 'No'}</div></div>
+  `;
+  document.getElementById("modal").classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("open");
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+});
+
+init();
+</script>
+
+</body>
+</html>

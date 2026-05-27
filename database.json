@@ -1,0 +1,80 @@
+[
+  {
+    "id": "SING-1B-001",
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "frontage": "Single aspect",
+    "width": 6.7,
+    "width2": null,
+    "depth": 10.3,
+    "reference": "TYPICAL",
+    "area": 55.17,
+    "study": false,
+    "thumbnail": "thumbnails/SING-1B-001.png"
+  },
+  {
+    "id": "SING-1B-002",
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "frontage": "Single aspect",
+    "width": 6.9,
+    "width2": null,
+    "depth": 10.32,
+    "reference": "2101 Midtown, Macquarie Park APT 601",
+    "area": 52.33,
+    "study": true,
+    "thumbnail": "thumbnails/SING-1B-002.png"
+  },
+  {
+    "id": "SING-2B-001",
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "frontage": "Single aspect",
+    "width": 10.3,
+    "width2": null,
+    "depth": 9.05,
+    "reference": "1601 Amara, Alexandria",
+    "area": 79.09,
+    "study": true,
+    "thumbnail": "thumbnails/SING-2B-001.png"
+  },
+  {
+    "id": "COR-3B-001",
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "frontage": "Corner",
+    "width": 10,
+    "width2": null,
+    "depth": 12.7,
+    "reference": "2399 Redfern Comp APT 401",
+    "area": 100.85,
+    "study": true,
+    "thumbnail": "thumbnails/COR-3B-001.png"
+  },
+  {
+    "id": "XTHR-2B-001",
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "frontage": "Cross-through",
+    "width": 6.6,
+    "width2": null,
+    "depth": 14.45,
+    "reference": "1405 Rochford, Erskineville",
+    "area": 76.11,
+    "study": false,
+    "thumbnail": "thumbnails/XTHR-2B-001.png"
+  },
+  {
+    "id": "XTHR-2B-002",
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "frontage": "Cross-through",
+    "width": 6.85,
+    "width2": 4.3,
+    "depth": 17.35,
+    "reference": "2101 Midtown, Macquarie Park APT 501",
+    "area": 83.5,
+    "study": true,
+    "thumbnail": "thumbnails/XTHR-2B-002.png"
+  }
+]
