@@ -130,6 +130,19 @@
     "thumbnail": "thumbnails/XTHR-2B-002.png"
   },
   {
+    "id": "XTHR-3B-001",
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "frontage": "Cross-through",
+    "width": 7.5,
+    "width2": null,
+    "depth": 17.35,
+    "reference": "2408 Kingsford APT 1001",
+    "area": 103.44,
+    "study": true,
+    "thumbnail": "thumbnails/XTHR-3B-001.png"
+  },
+  {
     "id": "XTHR-3B-002",
     "bedrooms": 3,
     "bathrooms": 2,
