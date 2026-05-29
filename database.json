@@ -39,6 +39,45 @@
     "thumbnail": "thumbnails/SING-2B-001.png"
   },
   {
+    "id": "SING-2B-002",
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "frontage": "Single aspect",
+    "width": 10.6,
+    "width2": null,
+    "depth": 9.45,
+    "reference": "2101 Midtown, Macquarie Park APT 701",
+    "area": 82.5,
+    "study": true,
+    "thumbnail": "thumbnails/SING-2B-002.png"
+  },
+  {
+    "id": "SING-3B-001",
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "frontage": "Single aspect",
+    "width": 13.65,
+    "width2": null,
+    "depth": 9.45,
+    "reference": "2101 Midtown, Macquarie Park APT 801",
+    "area": 98.52,
+    "study": true,
+    "thumbnail": "thumbnails/SING-3B-001.png"
+  },
+  {
+    "id": "COR-2B-001",
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "frontage": "Corner",
+    "width": 8.35,
+    "width2": null,
+    "depth": 10.3,
+    "reference": "TYPICAL",
+    "area": 77.19,
+    "study": false,
+    "thumbnail": "thumbnails/COR-2B-001.png"
+  },
+  {
     "id": "COR-3B-001",
     "bedrooms": 3,
     "bathrooms": 2,
@@ -50,6 +89,19 @@
     "area": 100.85,
     "study": true,
     "thumbnail": "thumbnails/COR-3B-001.png"
+  },
+  {
+    "id": "COR-3B-002",
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "frontage": "Corner",
+    "width": 10.1,
+    "width2": null,
+    "depth": 15.05,
+    "reference": "2408 Kingsford APT 901",
+    "area": 115.06,
+    "study": false,
+    "thumbnail": "thumbnails/COR-3B-002.png"
   },
   {
     "id": "XTHR-2B-001",
@@ -76,5 +128,18 @@
     "area": 83.5,
     "study": true,
     "thumbnail": "thumbnails/XTHR-2B-002.png"
+  },
+  {
+    "id": "XTHR-3B-002",
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "frontage": "Cross-through",
+    "width": 10,
+    "width2": 4.3,
+    "depth": 17.35,
+    "reference": "2101 Midtown, Macquarie Park APT 1201",
+    "area": 98.31,
+    "study": false,
+    "thumbnail": "thumbnails/XTHR-3B-002.png"
   }
 ]
